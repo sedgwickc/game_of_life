@@ -45,7 +45,7 @@ def main():
 
     text_stop = basicFont.render( 'STOP', 0, BLACK, GREY )
     text_stop_rect = text_stop.get_rect()
-    text_stop_rect.bottomright = winSurface.get_rect().bottomright
+    text_stop_rect.bottomleft = winSurface.get_rect().bottomleft
 
     start = False
 
@@ -132,10 +132,12 @@ def main():
             cells.update()
 
         winSurface.fill( GREY )
-        winSurface.blit( text_start, text_start_rect )
+        if start == True:
+        	winSurface.blit( text_stop, text_stop_rect )
+        else:
+        	winSurface.blit( text_start, text_start_rect )
         text_gen = basicFont.render( 'GEN: ' + str( gen ), 0, BLACK, GREY )
         winSurface.blit( text_gen, text_gen_rect )
-        winSurface.blit( text_stop, text_stop_rect )
         cells.draw( winSurface )
 
         time.sleep(frame_delay)

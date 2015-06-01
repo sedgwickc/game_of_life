@@ -3,20 +3,27 @@ import pygame
 class cellSprite( pygame.sprite.Sprite ):
     BLACK = (0, 0, 0)
     GREEN = (0, 255, 0)
+    BLUE = (0, 0, 255)
+    PURPLE = (200, 0, 200)
     
     COLOUR_DEAD = BLACK
     COLOUR_ALIVE = GREEN
+    COLOUR_FLAG_P1 = BLUE
+    COLOUR_FLAG_P2 = PURPLE
     
     HEIGHT = 10
     WIDTH = 10
     FONT_DEBUG = 10
 
-    DEAD = 0
-    ALIVE = 1
+    NONE = 0
+    P_ONE = 1
+    P_TWO = 2
 
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.state = self.DEAD
+        self.alive = False
+        self.flag = False
+        self.owner = cellSprite.NONE
         self.x_pos = x
         self.y_pos = y
         self.num_nbrs = 0
@@ -29,18 +36,29 @@ class cellSprite( pygame.sprite.Sprite ):
         self.rect.y = y
 
     def revive( self ):
-        self.state = self.ALIVE
+        self.alive = True
         self.image.fill( self.COLOUR_ALIVE )
 
     def is_alive( self ):
-        if self.state == self.ALIVE:
-            return True
-        else:
-            return False
+        return self.alive
 
     def kill( self ):
-        self.state = self.DEAD
+        self.alive = False
         self.image.fill( self.COLOUR_DEAD )
+
+    def is_flag( self ):
+        return self.flag
+
+    def set_flag( self, player ):
+        if player == cellSprite.P_ONE:
+            self.image.fill( cellSprite.COLOUR_FLAG_P1 )
+            self.owner = player
+        elif player == cellSprite.P_TWO:
+            self.image.fill( cellSprite.COLOUR_FLAG_P2 )
+            self.owner = player
+
+    def set_owner( self, player ):
+        self.owner = player
 
     def get_rect( self ):
         return self.rect
@@ -53,16 +71,16 @@ class cellSprite( pygame.sprite.Sprite ):
 
     def update( self ):
         # game rules
-        if self.state == self.ALIVE:
+        if self.alive == True:
             if self.num_nbrs < 2:
-                    self.state = self.DEAD
+                    self.alive = False
             elif self.num_nbrs > 3:
-                    self.state = self.DEAD
+                    self.alive = False
         else:
             if self.num_nbrs == 3:
-                    self.state = self.ALIVE
+                    self.alive = True
         # update cell image     
-        if self.state == self.DEAD:
+        if self.alive == False:
             self.image.fill( self.COLOUR_DEAD )
         else:
             self.image.fill( self.COLOUR_ALIVE )
